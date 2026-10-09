@@ -36,6 +36,18 @@
           <span class="badge-count" id="savedCountBadge">0</span>
         </button>
 
+        <button id="compareProfsBtn" class="btn btn-ghost" title="Compare Selected Professors" aria-label="Compare professors">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 3h5v5"/>
+            <path d="M4 20L21 3"/>
+            <path d="M21 16v5h-5"/>
+            <path d="M15 15l6 6"/>
+            <path d="M4 4l5 5"/>
+          </svg>
+          <span class="btn-text">Compare</span>
+          <span class="badge-count" id="compareCountBadge">0</span>
+        </button>
+
         <button id="addProfBtn" class="btn btn-secondary">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -87,8 +99,10 @@
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
           <input type="text" id="searchInput" placeholder="Search by professor name, department, or course (e.g. CS101)..." autocomplete="off" aria-label="Search professors">
+          <kbd class="search-kbd-hint" title="Press / anywhere on page to focus search">/</kbd>
           <button id="clearSearchBtn" class="clear-btn" aria-label="Clear search query" style="display: none;">&times;</button>
         </div>
+        <div class="search-autocomplete-dropdown" id="searchAutocomplete" style="display: none;" role="listbox" aria-label="Search suggestions"></div>
       </div>
 
       <!-- Quick Stats Counter -->
@@ -179,6 +193,20 @@
 
     </div>
   </main>
+
+  <!-- Floating Comparison Dock -->
+  <aside class="compare-dock" id="compareDock" aria-label="Selected professors for comparison" style="display: none;">
+    <div class="compare-dock-inner">
+      <div class="compare-dock-left">
+        <span class="compare-dock-title">⚖️ Compare Faculty (<span id="compareDockCount">0</span>/3):</span>
+        <div class="compare-dock-chips" id="compareDockChips"></div>
+      </div>
+      <div class="compare-dock-actions">
+        <button class="btn btn-primary btn-sm" id="launchCompareBtn">Compare Side-by-Side</button>
+        <button class="btn btn-ghost btn-sm" id="clearCompareBtn">Clear</button>
+      </div>
+    </div>
+  </aside>
 
   <!-- Footer -->
   <footer class="app-footer">
@@ -306,20 +334,48 @@
           </div>
         </div>
 
+        <!-- Logistics: Textbook & Workload -->
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="textbookSelect" class="form-label">Textbook Requirement</label>
+            <select id="textbookSelect" class="form-input">
+              <option value="No / Not needed" selected>No / Not needed</option>
+              <option value="Free PDF online">Free / Online PDF available</option>
+              <option value="Yes, mandatory">Yes, mandatory for homework</option>
+              <option value="Optional">Optional / Reference only</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="workloadSelect" class="form-label">Weekly Study Hours</label>
+            <select id="workloadSelect" class="form-input">
+              <option value="< 3 hrs/wk">&lt; 3 hrs/wk (Light)</option>
+              <option value="3-6 hrs/wk" selected>3 - 6 hrs/wk (Moderate)</option>
+              <option value="7-10 hrs/wk">7 - 10 hrs/wk (Heavy)</option>
+              <option value="10+ hrs/wk">10+ hrs/wk (Intensive)</option>
+            </select>
+          </div>
+        </div>
+
         <!-- Select Tags -->
         <div class="form-group">
           <label class="form-label">Select Tags (up to 3 tags describing the professor)</label>
           <div class="tags-selector" id="tagsSelector">
-            <span class="tag-choice" data-tag="Tough Grader">Tough Grader</span>
-            <span class="tag-choice" data-tag="Inspirational">Inspirational</span>
+            <span class="tag-choice" data-tag="Curves the Midterm">Curves the Midterm</span>
+            <span class="tag-choice" data-tag="Lecture Slides Online">Lecture Slides Online</span>
+            <span class="tag-choice" data-tag="No Textbook Needed">No Textbook Needed</span>
+            <span class="tag-choice" data-tag="Pencil & Paper Tests">Pencil & Paper Tests</span>
+            <span class="tag-choice" data-tag="Heavy Coding Psets">Heavy Coding Psets</span>
             <span class="tag-choice" data-tag="Clear Grading Criteria">Clear Grading Criteria</span>
             <span class="tag-choice" data-tag="Engaging Lectures">Engaging Lectures</span>
+            <span class="tag-choice" data-tag="Tough Grader">Tough Grader</span>
+            <span class="tag-choice" data-tag="Inspirational">Inspirational</span>
             <span class="tag-choice" data-tag="Lots of Homework">Lots of Homework</span>
             <span class="tag-choice" data-tag="Accessible Outside Class">Accessible Outside Class</span>
             <span class="tag-choice" data-tag="Hilarious">Hilarious</span>
             <span class="tag-choice" data-tag="Participation Matters">Participation Matters</span>
             <span class="tag-choice" data-tag="Beware of Pop Quizzes">Beware of Pop Quizzes</span>
             <span class="tag-choice" data-tag="Extra Credit Offered">Extra Credit Offered</span>
+            <span class="tag-choice" data-tag="Skip Class, Regret Later">Skip Class, Regret Later</span>
             <span class="tag-choice" data-tag="Group Projects">Group Projects</span>
           </div>
         </div>
@@ -391,6 +447,54 @@
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" id="cancelAddProfBtn">Cancel</button>
           <button type="submit" class="btn btn-primary" id="submitAddProfBtn">Add Professor to Directory</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- ================= DIALOG 4: Compare Faculty Modal ================= -->
+  <dialog id="compareModal" class="modal-dialog modal-xl" aria-labelledby="compareModalTitle">
+    <div class="modal-content modal-content-wide">
+      <button class="modal-close-btn" id="closeCompareModalBtn" aria-label="Close comparison dialog">&times;</button>
+      <div class="modal-header">
+        <h2 id="compareModalTitle" class="modal-title">Professor Side-by-Side Comparison</h2>
+        <p class="modal-desc">Compare quality ratings, grade distributions, workload expectations, and student consensus.</p>
+      </div>
+      <div id="compareModalBody" class="compare-modal-body">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ================= DIALOG 5: Report Review Modal ================= -->
+  <dialog id="reportModal" class="modal-dialog" aria-labelledby="reportModalTitle">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="closeReportModalBtn" aria-label="Close report dialog">&times;</button>
+      <div class="modal-header">
+        <h2 id="reportModalTitle" class="modal-title">🚩 Report Student Review</h2>
+        <p class="modal-desc">Help keep RateMyProf helpful, fair, and safe. Tell us what is wrong with this review.</p>
+      </div>
+      <form id="reportReviewForm" class="dialog-form" novalidate>
+        <input type="hidden" id="reportProfId">
+        <input type="hidden" id="reportRevId">
+        <div class="form-group">
+          <label for="reportReasonSelect" class="form-label">Violation Category <span class="required">*</span></label>
+          <select id="reportReasonSelect" class="form-input" required>
+            <option value="">-- Select reason --</option>
+            <option value="Offensive / Harassment">Offensive, abusive, or discriminatory language</option>
+            <option value="Fake / Bot Review">Fake review, spam, or bot submission</option>
+            <option value="Wrong Course or Professor">Review belongs to a different instructor/course</option>
+            <option value="False Accusation">Defamatory or slanderous accusation</option>
+            <option value="Other">Other guidelines violation</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="reportDetailsInput" class="form-label">Additional Explanation (Optional)</label>
+          <textarea id="reportDetailsInput" class="form-input form-textarea" rows="3" placeholder="Explain what makes this review suspicious or inappropriate for student moderators..."></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="cancelReportBtn">Cancel</button>
+          <button type="submit" class="btn btn-danger" id="submitReportBtn">Flag Review</button>
         </div>
       </form>
     </div>
