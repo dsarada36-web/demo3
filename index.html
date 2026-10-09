@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RateMyProf | Student Professor Ratings & Reviews</title>
+  <meta name="description" content="A clean, student-first platform to discover, rate, and review college professors.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand" role="banner">
+        <a href="#" class="brand-link" id="brandHomeBtn">
+          <div class="logo-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+          </div>
+          <span class="brand-name">Rate<span>MyProf</span></span>
+        </a>
+        <span class="brand-tagline">Campus Review Hub</span>
+      </div>
+
+      <div class="header-actions">
+        <button id="savedProfsBtn" class="btn btn-ghost" title="View Bookmarked Professors" aria-label="View saved professors">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
+          </svg>
+          <span class="btn-text">Saved</span>
+          <span class="badge-count" id="savedCountBadge">0</span>
+        </button>
+
+        <button id="addProfBtn" class="btn btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Add Professor</span>
+        </button>
+
+        <button id="rateNewBtn" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <span>Rate a Professor</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button id="themeToggleBtn" class="btn-icon" aria-label="Toggle dark/light theme" title="Toggle dark mode">
+          <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <span class="hero-pill">🎓 Real feedback from real students</span>
+      <h1 class="hero-title">Find the right professor.<br>Ace your semester.</h1>
+      <p class="hero-subtitle">Make informed course registration decisions. Honest ratings, grading fairness, difficulty meters, and genuine student reviews.</p>
+
+      <!-- Search Box -->
+      <div class="search-box">
+        <div class="search-input-wrapper">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Search by professor name, department, or course (e.g. CS101)..." autocomplete="off" aria-label="Search professors">
+          <button id="clearSearchBtn" class="clear-btn" aria-label="Clear search query" style="display: none;">&times;</button>
+        </div>
+      </div>
+
+      <!-- Quick Stats Counter -->
+      <div class="hero-stats">
+        <div class="stat-pill"><strong id="statProfCount">0</strong> Professors</div>
+        <div class="stat-pill"><strong id="statReviewCount">0</strong> Student Reviews</div>
+        <div class="stat-pill"><strong>100%</strong> Anonymous</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Layout -->
+  <main class="main-content">
+    <div class="content-container">
+
+      <!-- Department Filter Pills -->
+      <nav class="department-filters-wrapper" aria-label="Filter by department">
+        <div class="dept-pills-scroll" id="deptFilterPills">
+          <button class="dept-pill active" data-dept="all">All Departments</button>
+          <button class="dept-pill" data-dept="Computer Science">Computer Science</button>
+          <button class="dept-pill" data-dept="Mathematics">Mathematics</button>
+          <button class="dept-pill" data-dept="Physics & Engineering">Engineering & Physics</button>
+          <button class="dept-pill" data-dept="Business & Economics">Business & Econ</button>
+          <button class="dept-pill" data-dept="Psychology">Psychology</button>
+          <button class="dept-pill" data-dept="Humanities & Arts">Humanities & Arts</button>
+        </div>
+      </nav>
+
+      <!-- Control Toolbar: Sort, Filters, and Results Count -->
+      <section class="toolbar-section">
+        <div class="toolbar-left">
+          <h2 class="section-heading" id="catalogHeading">All Faculty Members</h2>
+          <span class="results-count" id="resultsCountText">Showing 0 professors</span>
+        </div>
+
+        <div class="toolbar-right">
+          <!-- Min Rating Filter -->
+          <div class="filter-group">
+            <label for="ratingFilterSelect" class="filter-label">Rating:</label>
+            <select id="ratingFilterSelect" class="styled-select" aria-label="Filter by minimum rating">
+              <option value="0">All Ratings</option>
+              <option value="4.5">4.5+ (Outstanding)</option>
+              <option value="4.0">4.0+ (Great)</option>
+              <option value="3.0">3.0+ (Average)</option>
+            </select>
+          </div>
+
+          <!-- Difficulty Filter -->
+          <div class="filter-group">
+            <label for="difficultyFilterSelect" class="filter-label">Difficulty:</label>
+            <select id="difficultyFilterSelect" class="styled-select" aria-label="Filter by difficulty">
+              <option value="all">Any Difficulty</option>
+              <option value="easy">Easy (&le; 2.5)</option>
+              <option value="medium">Medium (2.6 - 3.8)</option>
+              <option value="hard">Hard (&ge; 3.9)</option>
+            </select>
+          </div>
+
+          <!-- Sort Select -->
+          <div class="filter-group">
+            <label for="sortBySelect" class="filter-label">Sort by:</label>
+            <select id="sortBySelect" class="styled-select" aria-label="Sort professors by">
+              <option value="rating_desc">Highest Rated</option>
+              <option value="reviews_desc">Most Reviews</option>
+              <option value="difficulty_asc">Easiest First</option>
+              <option value="difficulty_desc">Toughest First</option>
+              <option value="name_asc">Name (A - Z)</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Active Filters Display -->
+      <div class="active-filter-chips" id="activeFilterChips"></div>
+
+      <!-- Professors Grid -->
+      <section class="professors-grid" id="professorsGrid" aria-label="List of professors">
+        <!-- Rendered dynamically via JavaScript -->
+      </section>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-state-icon">🔍</div>
+        <h3>No professors found</h3>
+        <p>Try clearing your search keyword or adjusting your filters.</p>
+        <button id="resetFiltersBtn" class="btn btn-secondary">Reset All Filters</button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span class="brand-name">Rate<span>MyProf</span></span>
+        <p>Built for students to make transparent, stress-free course choices.</p>
+      </div>
+      <div class="footer-links">
+        <button id="seedResetBtn" class="btn-link" title="Reset sample test data">Reset to Sample Data</button>
+        <span>&bull;</span>
+        <span>Local Storage Enabled</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= DIALOG 1: Professor Profile & Reviews Drawer/Modal ================= -->
+  <dialog id="profileModal" class="modal-dialog modal-large" aria-labelledby="profileModalName">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="closeProfileModalBtn" aria-label="Close profile details">&times;</button>
+      
+      <div id="profileModalBody">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ================= DIALOG 2: Rate Professor Modal ================= -->
+  <dialog id="rateModal" class="modal-dialog" aria-labelledby="rateModalTitle">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="closeRateModalBtn" aria-label="Close rating form">&times;</button>
+      <div class="modal-header">
+        <h2 id="rateModalTitle" class="modal-title">Rate a Professor</h2>
+        <p class="modal-desc">Share your honest classroom experience to help your fellow classmates.</p>
+      </div>
+
+      <form id="ratingForm" class="dialog-form" novalidate>
+        <!-- Professor Selector -->
+        <div class="form-group">
+          <label for="rateProfSelect" class="form-label">Select Professor <span class="required">*</span></label>
+          <select id="rateProfSelect" class="form-input" required>
+            <option value="">-- Choose a professor --</option>
+          </select>
+        </div>
+
+        <!-- Overall Rating (Stars) -->
+        <div class="form-group">
+          <label class="form-label">Overall Quality <span class="required">*</span></label>
+          <div class="star-rating-picker" id="starRatingPicker">
+            <button type="button" class="star-btn" data-value="1" aria-label="1 star - Terrible">&#9733;</button>
+            <button type="button" class="star-btn" data-value="2" aria-label="2 stars - Poor">&#9733;</button>
+            <button type="button" class="star-btn" data-value="3" aria-label="3 stars - Average">&#9733;</button>
+            <button type="button" class="star-btn" data-value="4" aria-label="4 stars - Good">&#9733;</button>
+            <button type="button" class="star-btn" data-value="5" aria-label="5 stars - Awesome">&#9733;</button>
+            <span class="rating-feedback-label" id="ratingFeedbackLabel">Click to rate</span>
+          </div>
+          <input type="hidden" id="overallRatingValue" name="overallRating" required>
+        </div>
+
+        <!-- Difficulty Rating -->
+        <div class="form-group">
+          <label class="form-label">Level of Difficulty <span class="required">*</span></label>
+          <div class="difficulty-picker" id="difficultyPicker">
+            <button type="button" class="diff-btn" data-diff="1">1 - Very Easy</button>
+            <button type="button" class="diff-btn" data-diff="2">2 - Easy</button>
+            <button type="button" class="diff-btn" data-diff="3">3 - Moderate</button>
+            <button type="button" class="diff-btn" data-diff="4">4 - Challenging</button>
+            <button type="button" class="diff-btn" data-diff="5">5 - Hardcore</button>
+          </div>
+          <input type="hidden" id="difficultyValue" name="difficulty" required>
+        </div>
+
+        <!-- Two Column Meta Fields -->
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="courseCodeInput" class="form-label">Course Code <span class="required">*</span></label>
+            <input type="text" id="courseCodeInput" class="form-input" placeholder="e.g. CS101, MATH204" required>
+          </div>
+          <div class="form-group flex-1">
+            <label for="gradeReceivedSelect" class="form-label">Grade Received</label>
+            <select id="gradeReceivedSelect" class="form-input">
+              <option value="A+">A+</option>
+              <option value="A" selected>A</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B">B</option>
+              <option value="B-">B-</option>
+              <option value="C+">C+</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="F">F</option>
+              <option value="Pass">Pass</option>
+              <option value="In Progress">In Progress</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Toggles: Take Again & Attendance -->
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">Would take again?</label>
+            <div class="segmented-control">
+              <label class="segment-opt">
+                <input type="radio" name="takeAgain" value="yes" checked>
+                <span>Yes</span>
+              </label>
+              <label class="segment-opt">
+                <input type="radio" name="takeAgain" value="no">
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">Was Attendance Mandatory?</label>
+            <div class="segmented-control">
+              <label class="segment-opt">
+                <input type="radio" name="attendanceMandatory" value="yes" checked>
+                <span>Yes</span>
+              </label>
+              <label class="segment-opt">
+                <input type="radio" name="attendanceMandatory" value="no">
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Select Tags -->
+        <div class="form-group">
+          <label class="form-label">Select Tags (up to 3 tags describing the professor)</label>
+          <div class="tags-selector" id="tagsSelector">
+            <span class="tag-choice" data-tag="Tough Grader">Tough Grader</span>
+            <span class="tag-choice" data-tag="Inspirational">Inspirational</span>
+            <span class="tag-choice" data-tag="Clear Grading Criteria">Clear Grading Criteria</span>
+            <span class="tag-choice" data-tag="Engaging Lectures">Engaging Lectures</span>
+            <span class="tag-choice" data-tag="Lots of Homework">Lots of Homework</span>
+            <span class="tag-choice" data-tag="Accessible Outside Class">Accessible Outside Class</span>
+            <span class="tag-choice" data-tag="Hilarious">Hilarious</span>
+            <span class="tag-choice" data-tag="Participation Matters">Participation Matters</span>
+            <span class="tag-choice" data-tag="Beware of Pop Quizzes">Beware of Pop Quizzes</span>
+            <span class="tag-choice" data-tag="Extra Credit Offered">Extra Credit Offered</span>
+            <span class="tag-choice" data-tag="Group Projects">Group Projects</span>
+          </div>
+        </div>
+
+        <!-- Review Comment -->
+        <div class="form-group">
+          <label for="reviewCommentInput" class="form-label">Write your Review <span class="required">*</span></label>
+          <textarea id="reviewCommentInput" class="form-input form-textarea" rows="4" placeholder="Give details about exams, lecture style, textbook use, and tips for future students..." required minlength="15"></textarea>
+          <div class="char-counter"><span id="charCount">0</span> / 500 characters</div>
+        </div>
+
+        <!-- Reviewer Subtitle / Major -->
+        <div class="form-group">
+          <label for="reviewerRoleInput" class="form-label">Student Tag (Optional)</label>
+          <input type="text" id="reviewerRoleInput" class="form-input" placeholder="e.g. 2nd Year CS Major or Anonymous Student">
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="cancelRateBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submitRateBtn">Post Anonymous Review</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- ================= DIALOG 3: Add Professor Modal ================= -->
+  <dialog id="addProfModal" class="modal-dialog" aria-labelledby="addProfModalTitle">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="closeAddProfModalBtn" aria-label="Close add professor dialog">&times;</button>
+      <div class="modal-header">
+        <h2 id="addProfModalTitle" class="modal-title">Add a New Professor</h2>
+        <p class="modal-desc">Can't find your instructor? Add them here so other students can rate them.</p>
+      </div>
+
+      <form id="addProfForm" class="dialog-form" novalidate>
+        <div class="form-group">
+          <label for="newProfName" class="form-label">Professor Full Name <span class="required">*</span></label>
+          <input type="text" id="newProfName" class="form-input" placeholder="e.g. Dr. Jennifer Wu" required>
+        </div>
+
+        <div class="form-group">
+          <label for="newProfDept" class="form-label">Academic Department <span class="required">*</span></label>
+          <select id="newProfDept" class="form-input" required>
+            <option value="">-- Choose department --</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Physics & Engineering">Physics & Engineering</option>
+            <option value="Business & Economics">Business & Economics</option>
+            <option value="Psychology">Psychology</option>
+            <option value="Humanities & Arts">Humanities & Arts</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="newProfUniv" class="form-label">University / College <span class="required">*</span></label>
+          <input type="text" id="newProfUniv" class="form-input" placeholder="e.g. Stanford University or MIT" value="State University" required>
+        </div>
+
+        <div class="form-group">
+          <label for="newProfCourses" class="form-label">Primary Courses Taught</label>
+          <input type="text" id="newProfCourses" class="form-input" placeholder="e.g. CS106A, CS161, CS229 (comma separated)">
+        </div>
+
+        <div class="form-group">
+          <label for="newProfBio" class="form-label">Short Description / Bio (Optional)</label>
+          <textarea id="newProfBio" class="form-input form-textarea" rows="2" placeholder="Brief note on their focus area or teaching role..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="cancelAddProfBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submitAddProfBtn">Add Professor to Directory</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
