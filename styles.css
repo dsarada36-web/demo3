@@ -2072,3 +2072,184 @@ body {
   opacity: 0.9;
 }
 
+/* In-Profile Review Keyword Search */
+.profile-review-search-box {
+  display: flex;
+  align-items: center;
+  position: relative;
+  min-width: 180px;
+  max-width: 240px;
+  flex: 1;
+}
+
+.profile-review-search-input {
+  width: 100%;
+  padding: 0.35rem 1.6rem 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.profile-review-search-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-subtle);
+}
+
+.profile-review-search-clear {
+  position: absolute;
+  right: 6px;
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px;
+  display: none;
+}
+
+.profile-review-search-clear:hover {
+  color: var(--text-main);
+}
+
+/* Review Badges & Academic Context */
+.review-term-badge {
+  background: var(--primary-subtle);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.review-curve-badge {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+}
+
+/* Aggregated Semester Workload Summary */
+.semester-summary-card {
+  grid-column: 1 / -1;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 0.5rem;
+}
+
+.semester-summary-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.semester-summary-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.semester-summary-title h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.semester-stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.75rem;
+}
+
+.schedule-stat-pill {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.85rem;
+  text-align: center;
+}
+
+.schedule-stat-num {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1.2;
+}
+
+.schedule-stat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-top: 0.2rem;
+}
+
+/* Empty States for Grade Curve and Profile Reviews */
+.empty-grade-state {
+  padding: 1.25rem;
+  background: var(--bg-subtle);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0.75rem 0;
+}
+
+.empty-profile-reviews {
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  background: var(--bg-surface);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  margin-top: 1rem;
+}
+
+.empty-profile-reviews h4 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+}
+
+.empty-profile-reviews p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+/* Flagged Content Blurred/Hidden */
+.review-content-hidden {
+  display: none !important;
+}
+
+.compare-quote-empty {
+  font-style: italic;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+}
+
+/* Dark mode contrast improvements */
+[data-theme="dark"] .autocomplete-match {
+  background: rgba(245, 158, 11, 0.35);
+  color: #fef3c7;
+}
+
+[data-theme="dark"] .grade-stacked-bar {
+  background: rgba(255, 255, 255, 0.08);
+}
+
